@@ -3,6 +3,7 @@ version: '3.5'
 services:
   zookeeper-add-kafka-users:
     image: confluentinc/cp-kafka:5.0.1
+    restart: always
     container_name: "zookeeper-add-kafka-users"
     depends_on:
       - zookeeper-1
@@ -14,6 +15,7 @@ services:
                           cub zk-ready zookeeper-3:42181 120 && \
                           kafka-configs --zookeeper zookeeper-1:22181 --alter --add-config 'SCRAM-SHA-256=[iterations=4096,password=password]' --entity-type users --entity-name metricsreporter && \
                           kafka-configs --zookeeper zookeeper-1:22181 --alter --add-config 'SCRAM-SHA-256=[iterations=4096,password=password]' --entity-type users --entity-name kafkaclient && \
+                          kafka-configs --zookeeper zookeeper-1:22181 --alter --add-config 'SCRAM-SHA-256=[iterations=4096,password=bkcs]' --entity-type users --entity-name dungtt && \
                           kafka-configs --zookeeper zookeeper-1:22181 --alter --add-config 'SCRAM-SHA-256=[iterations=4096,password=password]' --entity-type users --entity-name kafkabroker '"
     environment:
       KAFKA_BROKER_ID: ignored
@@ -119,8 +121,7 @@ services:
     hostname: kafka-broker-1
     container_name: kafka-broker-1
     ports:
-      - "19093:19093"
-      - "19094:19094"
+      - "9091:9091"
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -128,7 +129,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-1:32181,zookeeper-1:42181
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-broker-1:19093,SASL_SSL://kafka-broker-1:19094
+      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://${IP_ADDRESS}:9091
       KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker-1.keystore.jks
       KAFKA_SSL_KEYSTORE_CREDENTIALS: broker-1_keystore_creds
       KAFKA_SSL_KEY_CREDENTIALS: broker-1_sslkey_creds
@@ -138,7 +139,7 @@ services:
       CONFLUENT_METRICS_REPORTER_SSL_TRUSTSTORE_PASSWORD: confluent
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.broker-1.keystore.jks
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_PASSWORD: confluent
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
       KAFKA_SSL_CLIENT_AUTH: requested
       KAFKA_MIN_INSYNC_REPLICAS: ${KAFKA_MIN_INSYNC_REPLICAS}
       KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
@@ -171,8 +172,7 @@ services:
     hostname: kafka-broker-2
     container_name: kafka-broker-2
     ports:
-      - "29093:29093"
-      - "29094:29094"
+      - "9092:9092"
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -180,7 +180,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-1:32181,zookeeper-1:42181
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-broker-2:29093,SASL_SSL://kafka-broker-2:29094
+      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://${IP_ADDRESS}:9092
       KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker-2.keystore.jks
       KAFKA_SSL_KEYSTORE_CREDENTIALS: broker-2_keystore_creds
       KAFKA_SSL_KEY_CREDENTIALS: broker-2_sslkey_creds
@@ -190,7 +190,7 @@ services:
       CONFLUENT_METRICS_REPORTER_SSL_TRUSTSTORE_PASSWORD: confluent
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.broker-2.keystore.jks
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_PASSWORD: confluent
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
       KAFKA_SSL_CLIENT_AUTH: requested
       KAFKA_MIN_INSYNC_REPLICAS: ${KAFKA_MIN_INSYNC_REPLICAS}
       KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
@@ -223,8 +223,7 @@ services:
     hostname: kafka-broker-3
     container_name: kafka-broker-3
     ports:
-      - "39093:39093"
-      - "39094:39094"
+      - "9093:9093"
     depends_on:
       - zookeeper-1
       - zookeeper-2
@@ -232,7 +231,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181,zookeeper-1:32181,zookeeper-1:42181
-      KAFKA_ADVERTISED_LISTENERS: SSL://kafka-broker-3:39093,SASL_SSL://kafka-broker-3:39094
+      KAFKA_ADVERTISED_LISTENERS: SASL_SSL://${IP_ADDRESS}:9093
       KAFKA_SSL_KEYSTORE_FILENAME: kafka.broker-3.keystore.jks
       KAFKA_SSL_KEYSTORE_CREDENTIALS: broker-3_keystore_creds
       KAFKA_SSL_KEY_CREDENTIALS: broker-3_sslkey_creds
@@ -242,7 +241,7 @@ services:
       CONFLUENT_METRICS_REPORTER_SSL_TRUSTSTORE_PASSWORD: confluent
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.broker-3.keystore.jks
       CONFLUENT_METRICS_REPORTER_SSL_KEYSTORE_PASSWORD: confluent
-      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
       KAFKA_SSL_CLIENT_AUTH: requested
       KAFKA_MIN_INSYNC_REPLICAS: ${KAFKA_MIN_INSYNC_REPLICAS}
       KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
