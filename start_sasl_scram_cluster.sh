@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export IP_ADDRESS=192.168.1.135
+export IP_ADDRESS=
 export KAFKA_SSL_SECRETS_DIR=$PWD/secrets
 export KAFKA_SASL_SCRAM_SECRETS_DIR=$PWD/sasl-scram/secrets
 cd $PWD/sasl-scram/
