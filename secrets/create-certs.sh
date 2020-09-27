@@ -16,7 +16,7 @@ openssl x509 -req -CA snakeoil-ca-1.crt -CAkey snakeoil-ca-1.key -in kafkacat.cl
 
 
 
-for i in broker-1 broker-2 broker-3 producer consumer
+for i in broker zookeeper producer consumer
 do
 	echo $i
 	mkdir ./$i

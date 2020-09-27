@@ -7,16 +7,16 @@ sh create-certs.sh
 Nếu Client chạy bằng Python, cần chuyển Certificates từ định dạng .jks thành .pem như sau:
 ```shell script
 # Extract the client certificates
-keytool -exportcert -alias CARoot -keystore kafka.client.keystore.jks \
+keytool -exportcert -alias CARoot -keystore kafka.broker-1.keystore.jks \
         -rfc -file certificate.pem
 
 # Extract the clients key
-keytool -v -importkeystore -srckeystore kafka.client.keystore.jks \
+keytool -v -importkeystore -srckeystore kafka.broker-1.keystore.jks \
         -srcalias CARoot -destkeystore cert_and_key.p12 -deststoretype PKCS12
-openssl pkcs12 -in cert_and_key.p12 -nocerts -nodes
+openssl pkcs12 -in cert_and_key.p12 -nocerts -nodes -out key.pem
 
 # Extract CARoot certificate
-keytool -exportcert -alias CARoot -keystore kafka.client.keystore.jks -rfc \
+keytool -exportcert -alias CARoot -keystore kafka.broker-1.keystore.jks -rfc \
         -file CARoot.pem
 ``` 
 #### 2. Cài đặt SASL
