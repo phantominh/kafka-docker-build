@@ -1,15 +1,14 @@
-# I. Guide to Kafka/Zookeeper Installation with SSL/SASL
+# I. Cài đặt Kafka/Zookeeper trên Server
 
-## 1. SSL/SASL Configuration
+## 1. Cấu hình SSL/SASL
 
 ### a. SSL
-#### Go to ./secrets folder, if no certificate found, run the shellscript below:
+#### Vào thư mục ./secrets, nếu chưa có certificate thì chạy:
 ```shellscript
 sh create-certs.sh
 ``` 
-If the client is using Python, we need to convert .jks certificates to .pem:
+Nếu Client chạy bằng Python, cần chuyển Certificates từ định dạng .jks thành .pem như sau:
 ```shellscript
-# Convert kafka certificates
 # Extract the client certificates
 keytool -exportcert -alias CARoot -keystore kafka.broker.keystore.jks \
         -rfc -file certificate.pem
@@ -23,7 +22,7 @@ openssl pkcs12 -in cert_and_key.p12 -nocerts -nodes -out key.pem
 keytool -exportcert -alias CARoot -keystore kafka.broker.keystore.jks -rfc \
         -file CARoot.pem
 
-# Do the same thing to zookeeper certificates
+# Làm tương tự với Zookeeper
 keytool -exportcert -alias CARoot -keystore kafka.zookeeper.keystore.jks \
         -rfc -file certificate.pem
 keytool -v -importkeystore -srckeystore kafka.zookeeper.keystore.jks \
@@ -32,29 +31,29 @@ openssl pkcs12 -in cert_and_key.p12 -nocerts -nodes -out key.pem
 keytool -exportcert -alias CARoot -keystore kafka.zookeeper.keystore.jks -rfc \
         -file CARoot.pem
 ``` 
-Reference: http://maximilianchrist.com/python/databases/2016/08/13/connect-to-apache-kafka-from-python-using-ssl.html
+Link tham khảo: http://maximilianchrist.com/python/databases/2016/08/13/connect-to-apache-kafka-from-python-using-ssl.html
 
 ### b. SASL
-#### Go to ./sasl-scram/secrets
-Edit the configuration file to fit your own purpose
+####Vào thư mục ./sasl-scram/secrets
+Sửa các file config trong thư mục đó (nếu cần)
 
-## 2. Zookeeper Configuration
-### Make changes to start-zookeeper.sh to satisfy your machine environment:
-- "ZOO\_IP_ADDRESS": Zookeeper IP Address
-- "zookeeper.yml": Zookeeper Configuration File
+## 2. Cài đặt Zookeeper
+### Sửa một số giá trị trong file start-zookeeper.sh:
+- "ZOO\_IP_ADDRESS": Địa chỉ IP của Zookeeper
+- "zookeeper.yml": File cấu hình Zookeeper
 
-### Init Zookeeper:
+### Khởi tạo Zookeeper:
 ```shellscript
 sh start-zookeeper.sh
 ```  
 
-## 3. Install Kafka Brokers:
-### Configurate start-broker.sh:
-- "ZOO\_IP_ADDRESS": Zookeeper IP Address
-- "BROKER\_IP_ADDRESS": Broker's IP Address
-- "broker.yml": Kafka Broker Configuration File
+## 3. Cài đặt Kafka Broker:
+### Sửa một số giá trị trong file start-broker.sh:
+- "ZOO\_IP_ADDRESS": Địa chỉ IP của Zookeeper
+- "BROKER\_IP_ADDRESS": Địa chỉ IP của Broker sắp được khởi tạo
+- "broker.yml": File cấu hình Kafka Broker
 
-### Init Broker:
+### Khởi tạo Broker:
 ```shellscript
 sh start-broker.sh
 ``` 
